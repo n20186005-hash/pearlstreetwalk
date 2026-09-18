@@ -1,0 +1,17 @@
+{
+  "name": "Pearl Street Mall — Visitor Guide",
+  "short_name": "Pearl St Mall",
+  "description": "Visitor guide to Pearl Street Mall in Boulder, Colorado: location map, parking, food, nearby sights and travel tips.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f7f0e4",
+  "theme_color": "#1e2926",
+  "icons": [
+    { "src": "/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "/logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" },
+    { "src": "/favicon-32.png", "sizes": "32x32", "type": "image/png" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}
