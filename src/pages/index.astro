@@ -19,9 +19,9 @@ const NEARBY_1 = 'Museum of Boulder';          // {{NEARBY_LANDMARK_1}}
 const NEARBY_2 = 'Boulder Creek Path';         // {{NEARBY_LANDMARK_2}}
 const GOVT_TOURISM = 'https://bouldercolorado.gov'; // {{GOVT_TOURISM_URL}}
 
-// Ratings synced from Google Maps (display only — NOT in JSON-LD)
+// Ratings synced from Google Maps (display + JSON-LD aggregateRating)
 const RATING = '4.6';
-const REVIEWS = '10,686';
+const REVIEWS = '10,698';
 const SYNC_LABEL = '2026 年 9 月';
 
 const siteUrl = Astro.site ? Astro.site.origin : `https://${DOMAIN}`;
@@ -39,7 +39,7 @@ const photo = {
 // ---- 1. Structured data (Schema.org / JSON-LD) ----
 const placeLd:any = {
   '@context':'https://schema.org',
-  '@type':'TouristAttraction',
+  '@type':['TouristAttraction','ShoppingCenter'],
   '@id':`${siteUrl}/#attraction`,
   'name':FULL_NAME,
   'alternateName':[SHORT_NAME, `${CITY} ${FULL_NAME}`],
@@ -47,7 +47,7 @@ const placeLd:any = {
   'url':siteUrl,
   'image':[ogImage],
   'isAccessibleForFree':true,
-  'telephone':'+1-303-449-3774',
+  'telephone':'+13034493774',
   'address':{
     '@type':'PostalAddress',
     'streetAddress':'1303 Pearl St',
@@ -59,6 +59,13 @@ const placeLd:any = {
   'geo':{'@type':'GeoCoordinates','latitude':LAT,'longitude':LNG},
   'hasMap':MAPS_SHARE,
   'sameAs':[MAPS_SHARE, GOVT_TOURISM],
+  'aggregateRating':{
+    '@type':'AggregateRating',
+    'ratingValue':'4.6',
+    'reviewCount':'10698',
+    'bestRating':'5',
+    'worstRating':'1'
+  },
   'openingHoursSpecification':[{
     '@type':'OpeningHoursSpecification',
     'dayOfWeek':['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'],
@@ -84,7 +91,9 @@ const faqs = [
   ['How long should I plan to stay?','About 1.5–3 hours works well for a first visit, with more time if you plan a meal, shopping, a museum stop or an event.'],
   ['Where should I park?','City of Boulder operates multiple downtown garages close to Pearl Street, including 15th & Pearl, 14th & Walnut, 11th & Walnut and 11th & Spruce. Check current city rates before arrival.'],
   ['Are business hours the same as the mall hours?','No. The outdoor pedestrian space is accessible at all hours, but every shop, restaurant, visitor service and event sets its own schedule.'],
-  ['What is there to do near Pearl Street Mall?',`Within a short walk you can explore nearby landmarks such as ${NEARBY_1} and ${NEARBY_2}, plus Boulder’s shops, dining and creek-side trails.`]
+  ['What is there to do near Pearl Street Mall?',`Within a short walk you can explore nearby landmarks such as ${NEARBY_1} and ${NEARBY_2}, plus Boulder’s shops, dining and creek-side trails.`],
+  ['What is there to do on Pearl Street Mall?',`The four-block pedestrian mall mixes independent shops, cafés and restaurants with public art, play features, street performers and seasonal events — easy to browse, snack and people-watch without a plan.`],
+  ['What is Pearl Street Mall known for?',`It’s best known as Boulder’s historic four-block pedestrian mall: brick-paved streets closed to cars, mountain-town energy, buskers and a dense run of local shops and patios.`]
 ];
 const faqLd = {'@context':'https://schema.org','@type':'FAQPage',mainEntity:faqs.map(([q,a])=>({'@type':'Question',name:q,acceptedAnswer:{'@type':'Answer',text:a}}))};
 ---
@@ -93,8 +102,8 @@ const faqLd = {'@context':'https://schema.org','@type':'FAQPage',mainEntity:faqs
 <head>
 <meta charset="UTF-8"/><meta name="viewport" content="width=device-width"/>
 <!-- 2. TDK / Meta + OG -->
-<title>{FULL_NAME} ({CITY}) - Visitor Guide &amp; Location</title>
-<meta name="description" content={`Discover ${FULL_NAME}, the iconic pedestrian mall in ${CITY}, ${STATE}, ${COUNTRY}. View the location map, opening details, nearby ${NEARBY_1}, and practical travel tips.`}/>
+<title>{FULL_NAME} {CITY}: Visitor Guide, Map, Parking &amp; Shops</title>
+<meta name="description" content={`Plan a visit to ${FULL_NAME} in ${CITY}, ${STATE} — ${COUNTRY}. Find the location map, city parking garages, shops, restaurants, street performers and event info at 1303 Pearl St.`}/>
 <link rel="canonical" href={canonical}/>
 <meta property="og:title" content={`${FULL_NAME} - ${CITY} Travel Guide`}/>
 <meta property="og:description" content={`Official visitor guide to ${FULL_NAME} in ${CITY}, ${STATE}, ${COUNTRY}.`}/>

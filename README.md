@@ -3,9 +3,9 @@
 Single-page Astro + Tailwind CSS + TypeScript website, configured for Cloudflare Workers.
 
 ## Domain / SITE_URL
-The only site URL source is Astro's `site` config in `astro.config.ts`, read from `SITE_URL`.
-- No domain yet: leave `SITE_URL` unset. The build still works; canonical/absolute OG URLs are omitted and sitemap integration is disabled.
-- Domain ready: set `SITE_URL=https://your-real-domain.com` and rebuild. Canonical, Open Graph, JSON-LD URL and sitemap then derive from the same source.
+The site URL is Astro's `site` config in `astro.config.ts`, defaulting to `https://pearlstreetwalk.com` (overridable via `SITE_URL`).
+- Canonical URLs, absolute Open Graph URLs, JSON-LD URLs and the sitemap are all derived from this value, so they are produced on every build.
+- To point the build at a different domain, set `SITE_URL=https://your-domain.com` before building.
 
 ## Local development
 ```bash
