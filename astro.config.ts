@@ -3,12 +3,12 @@ import cloudflare from '@astrojs/cloudflare';
 import sitemap from '@astrojs/sitemap';
 import tailwindcss from '@tailwindcss/vite';
 
-const site = process.env.SITE_URL?.trim() || 'https://pearlstreetwalk.com';
+const site = 'https://pearlstreetwalk.com';
 
 export default defineConfig({
   site,
   output: 'server',
-  adapter: cloudflare(),
-  integrations: site ? [sitemap()] : [],
+  adapter: cloudflare({ configPath: 'wrangler.jsonc' }),
+  integrations: [sitemap({ customPages: [site + '/'], filter: (url) => !url.includes('/404') })],
   vite: { plugins: [tailwindcss()] }
 });

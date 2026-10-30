@@ -4,7 +4,7 @@
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
   Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: geolocation=(self), microphone=(), camera=()
+  Permissions-Policy: geolocation=(), microphone=(), camera=()
 
 /sw.js
   Cache-Control: no-cache

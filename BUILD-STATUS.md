@@ -1,28 +1,7 @@
-# Build status
+# Verification
 
-The source is prepared for Astro + Tailwind CSS + TypeScript on Cloudflare Workers.
+Use the native Astro Cloudflare adapter and pinned package-manager/dependency versions. Check and build commands are defined in package.json; historical production uses npm run build and npx wrangler deploy.
 
-## Verification limitation in this execution environment
+An initial normal frozen installation showed dependency scripts ignored. Only the three actual locked esbuild/workerd versions were subsequently allowed, and a fresh dependency directory was installed normally with the same frozen lockfile. The allowed-install log records workerd postinstall. This is a warm-store installation, not a claim of a cold store.
 
-The delivery environment could not resolve `registry.npmjs.org`, so Corepack/pnpm could not download dependencies. Therefore the mandatory clean install / `astro check` / `astro build` sequence could not be executed here, and no claim is made that it passed.
-
-Once network access to the npm registry is available, run:
-
-```bash
-rm -rf node_modules
-CI=1 corepack pnpm install
-pnpm check
-pnpm build
-```
-
-Then generate and commit `pnpm-lock.yaml`, followed by the requested frozen verification:
-
-```bash
-rm -rf node_modules
-CI=1 corepack pnpm install --frozen-lockfile
-pnpm check
-pnpm build
-# Run the requested placeholder/illegal-URL scan against dist after building.
-```
-
-If `SITE_URL` is not defined, sitemap generation is intentionally disabled and canonical/absolute Open Graph URLs are omitted. If `SITE_URL` is defined to the production domain, `@astrojs/sitemap` generates the sitemap from that single site configuration.
+Local checks, build, generated-entry routing, default deployment dry-run and native HTTP evidence are separate from exact-commit Cloudflare deployment and browser/production acceptance. A successful local result must not be described as a completed release.
