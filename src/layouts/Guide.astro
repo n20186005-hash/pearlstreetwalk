@@ -1,0 +1,78 @@
+---
+import Base from './Base.astro';
+import { REVIEW_DATE, SITE, MAPS } from '../data/guide';
+import { allPages } from '../data/pages/index';
+import type { GuidePage } from '../data/pages/shared';
+import { GENERAL_DISCLAIMER, SRC, VERIFIED_NOTE } from '../data/pages/shared';
+
+interface Props { page: GuidePage }
+const { page } = Astro.props;
+
+const related = page.related
+  .map((path) => allPages.find((item) => item.path === path))
+  .filter((item): item is GuidePage => item !== undefined);
+
+const groupId = page.group.toLowerCase().replace(/[^a-z]+/g, '-');
+const crumbs = [
+  { name: 'Home', item: SITE + '/' },
+  { name: 'Visitor guides', item: SITE + '/guides/' },
+  { name: page.group, item: SITE + '/guides/#' + groupId },
+  { name: page.h1, item: SITE + page.path }
+];
+
+const schema = [
+  {
+    '@context': 'https://schema.org', '@type': 'BreadcrumbList',
+    itemListElement: crumbs.map((crumb, index) => ({
+      '@type': 'ListItem', position: index + 1, name: crumb.name, item: crumb.item
+    }))
+  },
+  {
+    '@context': 'https://schema.org', '@type': 'Article',
+    '@id': SITE + page.path + '#article', headline: page.h1,
+    description: page.description, inLanguage: 'en-US',
+    mainEntityOfPage: SITE + page.path,
+    isPartOf: { '@id': SITE + '/#website' }, about: { '@id': SITE + '/#place' },
+    author: { '@type': 'Organization', name: 'Pearl Street Mall independent guide', url: SITE + '/' }
+  },
+  {
+    '@context': 'https://schema.org', '@type': 'FAQPage',
+    mainEntity: page.faqs.map(([question, answer]) => ({
+      '@type': 'Question', name: question,
+      acceptedAnswer: { '@type': 'Answer', text: answer }
+    }))
+  },
+  ...(page.nearby ? [{
+    '@context': 'https://schema.org', '@type': 'TouristAttraction',
+    '@id': SITE + page.path + '#place', name: page.h1,
+    description: page.description, url: SITE + page.path,
+    isPartOf: { '@id': SITE + '/#website' }
+  }] : [])
+];
+---
+<Base title={page.title} description={page.description} path={page.path}>
+<script slot="head" type="application/ld+json" set:html={JSON.stringify(schema)}/>
+
+<section class="section guide-hero"><div class="container">
+<p class="guide-crumbs"><a href="/">Home</a> › <a href="/guides/">Visitor guides</a> › <a href={'/guides/#'+groupId}>{page.group}</a> › {page.h1}</p>
+<p class="eyebrow">{page.group}</p>
+<h1 class="section-title">{page.h1}</h1>
+<p class="guide-lede">{page.lede}</p>
+<p class="guide-meta">Independent visitor guide · facts reviewed {REVIEW_DATE} · <a href={MAPS} target="_blank" rel="noopener noreferrer">Open the place on Google Maps ↗</a></p>
+</div></section>
+
+<section class="section"><div class="container narrow">
+<dl class="guide-facts">{page.facts.map(([label, value])=><div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+<p class="guide-note">{VERIFIED_NOTE}</p>
+
+{page.image&&<figure class="guide-figure"><img src="/images/pearl-2025-1600.jpg" srcset="/images/pearl-2025-800.jpg 800w, /images/pearl-2025-1600.jpg 1600w" sizes="(max-width: 900px) 100vw, 900px" width="1600" height="1067" loading="lazy" decoding="async" alt="Pearl Street storefronts and pedestrian paving in Boulder, photographed in December 2025"/><figcaption>Historical photograph: <a href={SRC.photo}>Jesse James / Wikimedia Commons</a>, 17 December 2025, <a href={SRC.licence}>CC BY 4.0</a>. Cropped, resized and recompressed. It shows a streetscape, not today’s tenants, entrances or facilities.</figcaption></figure>}
+
+{page.sections.map(section=><section class="guide-section"><h2>{section.heading}</h2>{section.paragraphs.map(paragraph=><p>{paragraph}</p>)}{section.bullets&&<ul>{section.bullets.map(bullet=><li>{bullet}</li>)}</ul>}{section.note&&<p class="guide-note">{section.note}</p>}</section>)}
+</div></section>
+
+<section class="section sand"><div class="container narrow"><p class="eyebrow">Before you go</p><h2 class="section-title">Common questions</h2><div class="faq-list">{page.faqs.map(([question,answer])=><details><summary>{question}</summary><p>{answer}</p></details>)}</div></div></section>
+
+<section class="section sources"><div class="container narrow"><p class="eyebrow">Checked {REVIEW_DATE}</p><h2 class="section-title">Sources and verification</h2><ul>{page.sources.map(([href,label])=><li><a href={href} target="_blank" rel="noopener noreferrer">{label} ↗</a></li>)}</ul><p>{GENERAL_DISCLAIMER}</p></div></section>
+
+<section class="section"><div class="container narrow guide-related"><p class="eyebrow">Keep planning</p><h2 class="section-title">Related guides</h2><ul>{related.map(item=><li><a href={item.path}>{item.h1}</a> — {item.intent}</li>)}</ul><p><a href="/guides/">Browse all 36 visitor guides →</a> · <a href="/">Back to the Pearl Street Mall overview →</a></p></div></section>
+</Base>

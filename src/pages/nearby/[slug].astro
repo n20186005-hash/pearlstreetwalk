@@ -1,0 +1,11 @@
+---
+import Guide from '../../layouts/Guide.astro';
+import { nearbyPages } from '../../data/pages/index';
+
+export const prerender = true;
+export function getStaticPaths() {
+  return nearbyPages.map((page) => ({ params: { slug: page.slug }, props: { page } }));
+}
+const { page } = Astro.props;
+---
+<Guide page={page} />

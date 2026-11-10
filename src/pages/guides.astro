@@ -1,0 +1,40 @@
+---
+import Base from '../layouts/Base.astro';
+import { REVIEW_DATE, SITE } from '../data/guide';
+import { allPages } from '../data/pages/index';
+import { GROUP_ORDER } from '../data/pages/shared';
+
+export const prerender = true;
+const title = 'Pearl Street Mall Visitor Guides | 36 Planning Topics';
+const description = 'Browse 36 separate English guides to Pearl Street Mall in Boulder: parking, maps, hours, transit, shops, restaurants, history, nearby places and itineraries.';
+const groups = GROUP_ORDER.map((group) => ({
+  id: group.toLowerCase().replace(/[^a-z]+/g, '-'),
+  name: group,
+  pages: allPages.filter((page) => page.group === group)
+}));
+const schema = {
+  '@context': 'https://schema.org', '@type': 'CollectionPage',
+  '@id': SITE + '/guides/#webpage', url: SITE + '/guides/',
+  name: title, description, inLanguage: 'en-US',
+  isPartOf: { '@id': SITE + '/#website' }, about: { '@id': SITE + '/#place' },
+  mainEntity: { '@type': 'ItemList', numberOfItems: allPages.length,
+    itemListElement: allPages.map((page, index) => ({
+      '@type': 'ListItem', position: index + 1, name: page.h1, url: SITE + page.path
+    })) }
+};
+---
+<Base title={title} description={description} path="/guides/">
+<script slot="head" type="application/ld+json" set:html={JSON.stringify(schema)}/>
+
+<section class="section guide-hero"><div class="container">
+<p class="guide-crumbs"><a href="/">Home</a> › Visitor guides</p>
+<p class="eyebrow">Independent planning library</p>
+<h1 class="section-title">Pearl Street Mall visitor guides</h1>
+<p class="guide-lede">The one-page overview stays where it is. These {allPages.length} separate English guides each answer one visitor question in depth — where to park, which entrance to use, what the four blocks actually are, how to eat nearby and how to combine a visit with other Boulder destinations.</p>
+<p class="guide-meta">Facts reviewed {REVIEW_DATE} · <a href="/">Return to the main Pearl Street Mall guide →</a></p>
+</div></section>
+
+{groups.map(group=><section class="section" id={group.id}><div class="container"><p class="eyebrow">{group.pages.length} guides</p><h2 class="section-title">{group.name}</h2><div class="three-col">{group.pages.map(page=><article class="card text-card"><h3><a href={page.path}>{page.h1}</a></h3><p>{page.intent}</p></article>)}</div></div></section>)}
+
+<section class="section sources"><div class="container narrow"><h2 class="section-title">How these guides are written</h2><p>Each page has one distinct search intent, its own title and description, a canonical URL, breadcrumbs, a dated fact table, substantive questions and answers, source links and links to related guides. Fields that could not be confirmed from an official source are labelled as unverified rather than filled with a guess.</p><p>The main guide keeps its existing design and all of its published photographs. The single historical streetscape is reused only on pages where it is relevant and is always accompanied by its attribution. This is an independent, unofficial guide, not the City of Boulder, Downtown Boulder Partnership or a merchant; it does not sell tickets or take reservations.</p></div></section>
+</Base>
